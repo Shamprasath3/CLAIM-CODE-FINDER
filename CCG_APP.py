@@ -3,8 +3,8 @@ import pandas as pd
 import os
 
 # ---------------- File Paths ----------------
-NEW_VRF_FILE = r"C:\Users\Sham prasath K\CARRIER_DATA\TOSHIBA_DATA\CALIM CODE GENERATOR\TOSHIBA VRF.xlsx"
-OLD_VRF_FILE = r"C:\Users\Sham prasath K\CARRIER_DATA\TOSHIBA_DATA\CALIM CODE GENERATOR\TOSHIBA MODEL.xlsx"
+NEW_VRF_FILE = r"data\TOSHIBA VRF.xlsx"
+OLD_VRF_FILE = r"data\TOSHIBA MODEL.xlsx"
 
 # ---------------- Utility Functions ----------------
 def load_excel(file_path):
@@ -116,3 +116,4 @@ if df is not None:
                 st.markdown('<div class="warning-box">⚠️ No SAP Code found for this Model + Part Description.</div>', unsafe_allow_html=True)
     else:
         st.error("⚠️ Could not find Model / Part Description / SAP Code columns in this file.")
+
