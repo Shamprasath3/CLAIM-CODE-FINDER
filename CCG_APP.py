@@ -3,13 +3,17 @@ import pandas as pd
 import os
 
 # ---------------- File Paths ----------------
-NEW_VRF_FILE = "data\TOSHIBA_VRF.xlsx"
-OLD_VRF_FILE = "data\TOSHIBA_MODEL.xlsx"
+NEW_VRF_FILE = "data/TOSHIBA_VRF.xlsx"
+OLD_VRF_FILE = "data/TOSHIBA_MODEL.xlsx"
 
 # ---------------- Utility Functions ----------------
-def load_excel(file_path):
+def load_excel(file_path, uploaded_file=None):
+    """Load Excel either from file path or uploaded file."""
     try:
-        df = pd.read_excel(file_path)
+        if uploaded_file:
+            df = pd.read_excel(uploaded_file)
+        else:
+            df = pd.read_excel(file_path)
         df.columns = df.columns.astype(str).str.strip()
         return df
     except Exception as e:
@@ -25,75 +29,48 @@ def find_column(df, keywords):
 # ---------------- Streamlit UI ----------------
 st.set_page_config(page_title="Toshiba VRF SAP Finder", page_icon="⚙️", layout="wide")
 
-# --------- Custom CSS for Premium Look ---------
-st.markdown("""
-    <style>
-    body {
-        background-color: #f8f9fa;
-    }
-    .main-title {
-        text-align: center;
-        color: white;
-        padding: 15px;
-        background: linear-gradient(90deg, #0f4c75, #3282b8);
-        border-radius: 12px;
-        font-size: 30px !important;
-    }
-    .sub-section {
-        font-size: 20px;
-        margin-top: 25px;
-        padding: 10px;
-        background: #f1f1f1;
-        border-radius: 10px;
-        font-weight: bold;
-        color: #222;
-    }
-    .result-box {
-        background: #e8f5e9;
-        padding: 15px;
-        border-left: 6px solid #2e7d32;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        font-size: 18px;
-    }
-    .warning-box {
-        background: #fff3e0;
-        padding: 15px;
-        border-left: 6px solid #ef6c00;
-        border-radius: 8px;
-        margin-top: 10px;
-        font-size: 16px;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 # --------- Header ---------
-st.markdown('<div class="main-title">⚙️ TOSHIBA VRF CLAIM CODE FINDER</div>', unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style="text-align:center; padding:15px; background:linear-gradient(90deg, #0f4c75, #3282b8);
+                border-radius:12px; color:white; font-size:30px; font-weight:bold;">
+        ⚙️ TOSHIBA VRF CLAIM CODE FINDER
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ---------------- File Selection ----------------
-st.markdown('<div class="sub-section">📂 Select System Type</div>', unsafe_allow_html=True)
+st.markdown("### 📂 Select System Type")
 option = st.radio("", ["NEW VRF", "OLD VRF"], horizontal=True)
+
+# Pick file path
 file_path = NEW_VRF_FILE if option == "NEW VRF" else OLD_VRF_FILE
 
-df = load_excel(file_path)
-
-if df is not None:
+# Check if file exists in repo
+if os.path.exists(file_path):
+    df = load_excel(file_path)
     st.success(f"✅ Loaded file: **{os.path.basename(file_path)}**")
+else:
+    st.warning(f"⚠️ {os.path.basename(file_path)} not found in repo. Please upload manually.")
+    uploaded_file = st.file_uploader(f"Upload {option} Excel File", type=["xlsx"])
+    df = load_excel(None, uploaded_file) if uploaded_file else None
 
-    # Identify useful columns
+# ---------------- Main Logic ----------------
+if df is not None:
     model_col = find_column(df, ["model"])
     part_col = find_column(df, ["part description", "part", "discrim"])
     sap_col = find_column(df, ["sap", "code"])
 
     if model_col and part_col and sap_col:
-        # ---------------- Model Selection ----------------
-        st.markdown('<div class="sub-section">🏷️ Select Model</div>', unsafe_allow_html=True)
+        # --- Model Selection ---
+        st.markdown("### 🏷️ Select Model")
         model_options = sorted(df[model_col].dropna().unique())
         selected_model = st.selectbox("Choose a model:", options=model_options)
 
-        # ---------------- Part Description Selection ----------------
-        st.markdown('<div class="sub-section">🔎 Select Part Description</div>', unsafe_allow_html=True)
+        # --- Part Description Selection ---
+        st.markdown("### 🔎 Select Part Description")
         filtered_parts = df[df[model_col] == selected_model][part_col].dropna().unique()
         part_options = sorted(filtered_parts)
         selected_part = st.selectbox(
@@ -103,19 +80,15 @@ if df is not None:
             placeholder="🔍 Type or select part..."
         )
 
-        # ---------------- SAP Code Lookup ----------------
+        # --- SAP Code Lookup ---
         if selected_model and selected_part:
-            st.markdown('<div class="sub-section">📜 CLAIM CODE</div>', unsafe_allow_html=True)
+            st.markdown("### 📜 CLAIM CODE")
             filtered = df[(df[model_col] == selected_model) & (df[part_col] == selected_part)]
-
             if not filtered.empty:
                 sap_codes = filtered[sap_col].dropna().unique()
                 for code in sap_codes:
-                    st.markdown(f'<div class="result-box">🔹 Code: <b>{code}</b></div>', unsafe_allow_html=True)
+                    st.success(f"🔹 Code: **{code}**")
             else:
-                st.markdown('<div class="warning-box">⚠️ No SAP Code found for this Model + Part Description.</div>', unsafe_allow_html=True)
+                st.warning("⚠️ No SAP Code found for this Model + Part Description.")
     else:
         st.error("⚠️ Could not find Model / Part Description / SAP Code columns in this file.")
-
-
-
