@@ -43,10 +43,10 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # ---------------- File Selection ----------------
 st.markdown("### 📂 Select System Type")
-option = st.radio("", ["NEW VRF", "OLD VRF"], horizontal=True)
+option = st.radio("", ["CVRF", "TVRF"], horizontal=True)
 
 # Pick file path
-file_path = NEW_VRF_FILE if option == "NEW VRF" else OLD_VRF_FILE
+file_path = NEW_VRF_FILE if option == "CVRF" else TVRF_FILE
 
 # Check if file exists in repo
 if os.path.exists(file_path):
@@ -92,3 +92,4 @@ if df is not None:
                 st.warning("⚠️ No SAP Code found for this Model + Part Description.")
     else:
         st.error("⚠️ Could not find Model / Part Description / SAP Code columns in this file.")
+
