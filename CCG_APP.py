@@ -43,7 +43,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # ---------------- File Selection ----------------
 st.markdown("### 📂 Select System Type")
-option = st.radio("", ["CVRF", "TVRF"], horizontal=True)
+option = st.radio("", ["CVRF", "NEW VRF"], horizontal=True)
 
 # Pick file path
 file_path = NEW_VRF_FILE if option == "CVRF" else NEW_VRF_FILE
