@@ -34,7 +34,7 @@ st.markdown(
     """
     <div style="text-align:center; padding:15px; background:linear-gradient(90deg, #0f4c75, #3282b8);
                 border-radius:12px; color:white; font-size:30px; font-weight:bold;">
-        ⚙️ TOSHIBA VRF CLAIM CODE FINDER
+        ⚙️  VRF CLAIM CODE FINDER
     </div>
     """,
     unsafe_allow_html=True,
