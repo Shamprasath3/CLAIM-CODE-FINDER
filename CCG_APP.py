@@ -27,14 +27,14 @@ def find_column(df, keywords):
     return None
 
 # ---------------- Streamlit UI ----------------
-st.set_page_config(page_title="Toshiba VRF SAP Finder", page_icon="⚙️", layout="wide")
+st.set_page_config(page_title="Carrier-Toshiba VRF SAP Finder", page_icon="⚙️", layout="wide")
 
 # --------- Header ---------
 st.markdown(
     """
     <div style="text-align:center; padding:15px; background:linear-gradient(90deg, #0f4c75, #3282b8);
                 border-radius:12px; color:white; font-size:30px; font-weight:bold;">
-        ⚙️  VRF CLAIM CODE FINDER
+        ⚙️  CARRIER-TOSHIBA VRF CLAIM CODE FINDER
     </div>
     """,
     unsafe_allow_html=True,
